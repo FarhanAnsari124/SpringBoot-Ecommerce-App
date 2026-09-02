@@ -3,7 +3,10 @@ package in.thefarhan.sb_ecomm.service;
 import in.thefarhan.sb_ecomm.exceptions.APIException;
 import in.thefarhan.sb_ecomm.exceptions.ResourceNotFoundException;
 import in.thefarhan.sb_ecomm.model.Category;
+import in.thefarhan.sb_ecomm.payload.CategoryDTO;
+import in.thefarhan.sb_ecomm.payload.CategoryResponse;
 import in.thefarhan.sb_ecomm.repositories.CategoryRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -13,13 +16,21 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         List<Category> categories = categoryRepository.findAll();
         if(categories.isEmpty()){
             throw new APIException("No category created till now");
         }
-        return categories;
+        List<CategoryDTO> categoryDTOS = categories.stream()
+                .map(category -> modelMapper.map(category,CategoryDTO.class))
+                .toList();
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setContent(categoryDTOS);
+        return categoryResponse;
     }
     @Override
     public void createCategory(Category category) {
