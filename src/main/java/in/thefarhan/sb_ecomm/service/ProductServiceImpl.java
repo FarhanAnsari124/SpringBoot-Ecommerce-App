@@ -25,12 +25,13 @@ public class ProductServiceImpl implements ProductService{
     private ModelMapper modelMapper;
 
     @Override
-    public ProductDTO addProduct(Long categoryId, Product product) {
+    public ProductDTO addProduct(Long categoryId,ProductDTO productDTO) {
+        Product product = modelMapper.map(productDTO,Product.class);
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(()-> new ResourceNotFoundException("Category","categoryId",categoryId));
         product.setImage("default.png");
         product.setCategory(category);
-        double specialPrice = product.getPrice()-((product.getDiscount()*.01)*product.getPrice());
+        double specialPrice = product.getPrice()-((product.getDiscount()*.01)* product.getPrice());
         product.setSpecialPrice(specialPrice);
         Product savedProduct = productRepository.save(product);
         return modelMapper.map(savedProduct,ProductDTO.class);
@@ -72,17 +73,18 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public ProductDTO updateProduct(Long productId, Product product) {
+    public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
+        Product newProduct = modelMapper.map(productDTO,Product.class);
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(()-> new ResourceNotFoundException("Product","productId",productId));
-        existingProduct.setProductName(product.getProductName());
-        existingProduct.setDescription(product.getDescription());
-        existingProduct.setQuantity(product.getQuantity());
-        existingProduct.setPrice(product.getPrice());
-        existingProduct.setDiscount(product.getDiscount());
+        existingProduct.setProductName(newProduct.getProductName());
+        existingProduct.setDescription(newProduct.getDescription());
+        existingProduct.setQuantity(newProduct.getQuantity());
+        existingProduct.setPrice(newProduct.getPrice());
+        existingProduct.setDiscount(newProduct.getDiscount());
 
-        double specialPrice = product.getPrice()
-                - (product.getPrice() * product.getDiscount() / 100);
+        double specialPrice = newProduct.getPrice()
+                - (newProduct.getPrice() * newProduct.getDiscount() / 100);
         existingProduct.setSpecialPrice(specialPrice);
         Product updatedProduct = productRepository.save(existingProduct);
         return modelMapper.map(updatedProduct, ProductDTO.class);
