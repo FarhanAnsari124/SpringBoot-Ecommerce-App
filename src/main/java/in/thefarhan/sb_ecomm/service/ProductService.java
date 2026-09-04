@@ -1,7 +1,6 @@
 package in.thefarhan.sb_ecomm.service;
 
 
-import in.thefarhan.sb_ecomm.model.Product;
 import in.thefarhan.sb_ecomm.payload.ProductDTO;
 import in.thefarhan.sb_ecomm.payload.ProductResponse;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,11 +11,11 @@ public interface ProductService {
 
     ProductDTO addProduct(Long categoryId, ProductDTO productDTO);
 
-    ProductResponse getAllProducts();
+    ProductResponse getAllProducts(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductResponse getProductsByCategory(Long categoryId);
+    ProductResponse getProductsByCategory(Long categoryId, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
-    ProductResponse getProductsByKeyword(String keyword);
+    ProductResponse getProductsByKeyword(String keyword, Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 
     ProductDTO updateProduct(Long productId, ProductDTO productDTO);
 
