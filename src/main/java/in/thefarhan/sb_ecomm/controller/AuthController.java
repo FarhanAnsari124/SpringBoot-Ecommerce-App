@@ -11,7 +11,6 @@ import in.thefarhan.sb_ecomm.security.response.MessageResponse;
 import in.thefarhan.sb_ecomm.security.services.UserDetailsImpl;
 import in.thefarhan.sb_ecomm.security.request.LoginRequest;
 import in.thefarhan.sb_ecomm.security.response.UserInfoResponse;
-import io.jsonwebtoken.security.Password;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,9 +23,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
+@RestController
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     private JwtUtils jwtUtils;
@@ -74,8 +77,8 @@ public class AuthController {
         if(userRepository.existsByUserName(signupRequest.getUsername())){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: username is already taken!!"));
         }
-        if(userRepository.existsByEmail(signupRequest.getUsername())){
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: username is already taken!!"));
+        if(userRepository.existsByEmail(signupRequest.getEmail())){
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already taken!!"));
         }
 
         User user = new User(
@@ -83,7 +86,7 @@ public class AuthController {
                 signupRequest.getEmail(),
                 passwordEncoder.encode(signupRequest.getPassword())
         );
-        Set<String> strRoles = signupRequest.getRoles();
+        Set<String> strRoles = signupRequest.getRole();
         Set<Role> roles =new HashSet<>();
         if(strRoles==null){
             Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
