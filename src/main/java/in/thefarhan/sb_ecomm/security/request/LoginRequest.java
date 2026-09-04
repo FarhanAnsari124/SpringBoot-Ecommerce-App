@@ -1,8 +1,11 @@
-package in.thefarhan.sb_ecomm.security.jwt;
+package in.thefarhan.sb_ecomm.security.request;
+
+import jakarta.validation.constraints.NotBlank;
 
 public class LoginRequest {
+    @NotBlank
     private String username;
-
+    @NotBlank
     private String password;
 
     public String getUsername() {
